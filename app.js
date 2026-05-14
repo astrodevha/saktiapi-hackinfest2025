@@ -65,11 +65,13 @@ app.set('trust proxy', process.env.NODE_ENV === 'production');
 const corsOptions = {
   origin: [
     'http://localhost:5173',          // Development (Vite default)
+    'http://localhost:3000',          // Alternative dev
     'https://sakti-drab.vercel.app',  // Production frontend
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   credentials: true,               // Mengizinkan cookies & Authorization header
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exporsedHeaders: ['Authorization'],
 };
 
 app.use(cors(corsOptions));
@@ -168,7 +170,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ============================================================================
 // Routes
 // ============================================================================
-
+// Tambahkan setelah middleware sebelum routes
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
+    database: sequelize.authenticate() ? 'connected' : 'disconnected'
+  });
+});
 // --- Autentikasi ---
 // loginLimiter akan digunakan secara selektif di dalam authRoutes
 app.use('/api/auth', require('./routes/authRoutes'));
