@@ -4,12 +4,11 @@
   "description": "REST API backend untuk aplikasi Darustrack — sistem manajemen akademik pesantren.",
   "main": "app.js",
   "scripts": {
-    "start": "NODE_ENV=production node ./bin/www",
-    "dev": "nodemon ./bin/www",
+    "start": "node ./bin/www",
+    "railway-start": "npm run migrate && npm run seed && npm run start",
     "migrate": "npx sequelize-cli db:migrate",
     "migrate:reset": "npx sequelize-cli db:migrate:undo:all",
-    "seed": "npx sequelize-cli db:seed:all",
-    "postinstall": "echo 'Dependencies installed successfully'"
+    "seed": "npx sequelize-cli db:seed:all"
   },
   "dependencies": {
     "argon2": "^0.44.0",
