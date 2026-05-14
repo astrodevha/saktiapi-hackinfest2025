@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // Cek apakah tabel sudah ada (mencegah error jika pernah gagal)
+    // Cek apakah tabel sudah ada, jika ya lewati
     const [tables] = await queryInterface.sequelize.query(
       "SHOW TABLES LIKE 'sectors'"
     );
@@ -15,7 +15,7 @@ module.exports = {
       id: {
         type: Sequelize.CHAR(36),
         primaryKey: true,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV4,   // ✅ WAJIB untuk CHAR(36) PK
         allowNull: false,
         collate: 'utf8mb4_bin'
       },
@@ -31,10 +31,12 @@ module.exports = {
       },
       created_at: {
         type: Sequelize.DATE,
+        allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updated_at: {
         type: Sequelize.DATE,
+        allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
       }
     });
