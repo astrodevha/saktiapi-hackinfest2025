@@ -2,80 +2,79 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // Cek apakah tabel sudah ada
-    const tables = await queryInterface.sequelize.query(
-      "SHOW TABLES LIKE 'sub_portfolios'",
-      { type: Sequelize.QueryTypes.SELECT }
-    );
-    
-    if (tables.length > 0) {
-      console.log('Table sub_portfolios already exists, skipping...');
-      return;
-    }
-    
-    await queryInterface.createTable('sub_portfolios', {
-      id: {
-        type: Sequelize.CHAR(36),
-        primaryKey: true,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: false
-      },
-      portfolio_id: {
-        type: Sequelize.CHAR(36),
-        allowNull: false,
-        references: {
-          model: 'portfolios',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT'
-      },
-      name: {
-        type: Sequelize.STRING(255),
-        allowNull: false
-      },
-      code: {
-        type: Sequelize.STRING(50),
-        allowNull: false
-      },
-      description: {
-        type: Sequelize.TEXT,
-        allowNull: true
-      },
-      is_active: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true,
-        allowNull: false
-      },
-      created_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-      },
-      updated_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+    try {
+      const [results] = await queryInterface.sequelize.query(
+        "SHOW TABLES LIKE 'sub_portfolios'"
+      );
+      
+      if (results.length > 0) {
+        console.log('Table sub_portfolios already exists, skipping creation');
+        return;
       }
-    });
-    
-    // Tambahkan unique constraint
-    await queryInterface.addConstraint('sub_portfolios', {
-      fields: ['portfolio_id', 'code'],
-      type: 'unique',
-      name: 'unique_sub_portfolios_portfolio_code'
-    });
-    
-    await queryInterface.addIndex('sub_portfolios', ['portfolio_id']);
-    await queryInterface.addIndex('sub_portfolios', ['code']);
+      
+      await queryInterface.createTable('sub_portfolios', {
+        id: {
+          type: Sequelize.CHAR(36),
+          primaryKey: true,
+          defaultValue: Sequelize.UUIDV4,
+          allowNull: false
+        },
+        portfolio_id: {
+          type: Sequelize.CHAR(36),
+          allowNull: false
+        },
+        name: {
+          type: Sequelize.STRING(255),
+          allowNull: false
+        },
+        code: {
+          type: Sequelize.STRING(50),
+          allowNull: false
+        },
+        description: {
+          type: Sequelize.TEXT,
+          allowNull: true
+        },
+        is_active: {
+          type: Sequelize.BOOLEAN,
+          defaultValue: true
+        },
+        created_at: {
+          type: Sequelize.DATE,
+          defaultValue: Sequelize.NOW
+        },
+        updated_at: {
+          type: Sequelize.DATE,
+          defaultValue: Sequelize.NOW
+        }
+      });
+      
+      // Tambahkan foreign key setelah table dibuat
+      await queryInterface.addConstraint('sub_portfolios', {
+        fields: ['portfolio_id'],
+        type: 'foreign key',
+        references: {
+          table: 'portfolios',
+          field: 'id'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+      });
+      
+      console.log('Table sub_portfolios created successfully');
+      
+    } catch (error) {
+      console.error('Error in sub_portfolios migration:', error.message);
+      throw error;
+    }
   },
 
   async down(queryInterface, Sequelize) {
     try {
-      await queryInterface.removeConstraint('sub_portfolios', 'unique_sub_portfolios_portfolio_code');
+      await queryInterface.dropTable('sub_portfolios');
+      console.log('Table sub_portfolios dropped successfully');
     } catch (error) {
-      console.log('Constraint might not exist');
+      console.error('Error dropping sub_portfolios:', error.message);
     }
-    await queryInterface.dropTable('sub_portfolios');
   }
 };
