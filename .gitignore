@@ -1,2 +1,18 @@
-node_modules
+# Upload directories
+uploads/
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment
 .env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
