@@ -3,17 +3,6 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     try {
-      // Cek apakah tabel sudah ada
-      const [results] = await queryInterface.sequelize.query(
-        "SHOW TABLES LIKE 'portfolios'"
-      );
-      
-      if (results.length > 0) {
-        console.log('Table portfolios already exists, skipping creation');
-        return;
-      }
-      
-      // Buat tabel tanpa constraint kompleks dulu
       await queryInterface.createTable('portfolios', {
         id: {
           type: Sequelize.CHAR(36),
@@ -46,9 +35,6 @@ module.exports = {
           defaultValue: Sequelize.NOW
         }
       });
-      
-      console.log('Table portfolios created successfully');
-      
     } catch (error) {
       console.error('Error in portfolios migration:', error.message);
       throw error;
@@ -58,7 +44,6 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     try {
       await queryInterface.dropTable('portfolios');
-      console.log('Table portfolios dropped successfully');
     } catch (error) {
       console.error('Error dropping portfolios:', error.message);
     }

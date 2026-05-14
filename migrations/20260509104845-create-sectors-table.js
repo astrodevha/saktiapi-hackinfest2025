@@ -2,10 +2,21 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
+    // Cek apakah tabel sudah ada (mencegah error jika pernah gagal)
+    const [tables] = await queryInterface.sequelize.query(
+      "SHOW TABLES LIKE 'sectors'"
+    );
+    if (tables.length > 0) {
+      console.log('Table sectors already exists, skipping creation');
+      return;
+    }
+
     await queryInterface.createTable('sectors', {
       id: {
         type: Sequelize.CHAR(36),
         primaryKey: true,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
         collate: 'utf8mb4_bin'
       },
       name: {

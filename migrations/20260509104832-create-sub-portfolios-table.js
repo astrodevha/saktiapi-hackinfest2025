@@ -3,15 +3,6 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     try {
-      const [results] = await queryInterface.sequelize.query(
-        "SHOW TABLES LIKE 'sub_portfolios'"
-      );
-      
-      if (results.length > 0) {
-        console.log('Table sub_portfolios already exists, skipping creation');
-        return;
-      }
-      
       await queryInterface.createTable('sub_portfolios', {
         id: {
           type: Sequelize.CHAR(36),
@@ -49,7 +40,6 @@ module.exports = {
         }
       });
       
-      // Tambahkan foreign key setelah table dibuat
       await queryInterface.addConstraint('sub_portfolios', {
         fields: ['portfolio_id'],
         type: 'foreign key',
@@ -60,9 +50,6 @@ module.exports = {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'
       });
-      
-      console.log('Table sub_portfolios created successfully');
-      
     } catch (error) {
       console.error('Error in sub_portfolios migration:', error.message);
       throw error;
@@ -72,7 +59,6 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     try {
       await queryInterface.dropTable('sub_portfolios');
-      console.log('Table sub_portfolios dropped successfully');
     } catch (error) {
       console.error('Error dropping sub_portfolios:', error.message);
     }

@@ -7,21 +7,21 @@ module.exports = {
       { 
         id: uuidv4(), 
         name: 'Digital Transformation', 
-        code: 'DIGITAL',      // ✅ tambahkan code
+        code: 'DIGITAL',
         created_at: new Date(), 
         updated_at: new Date() 
       },
       { 
         id: uuidv4(), 
         name: 'Cybersecurity', 
-        code: 'CYBER',        // ✅ tambahkan code
+        code: 'CYBER',
         created_at: new Date(), 
         updated_at: new Date() 
       },
       { 
         id: uuidv4(), 
         name: 'Infrastructure', 
-        code: 'INFRA',        // ✅ tambahkan code
+        code: 'INFRA',
         created_at: new Date(), 
         updated_at: new Date() 
       },

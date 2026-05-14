@@ -6,6 +6,7 @@ module.exports = {
       id: {
         type: Sequelize.CHAR(36),
         primaryKey: true,
+        defaultValue: Sequelize.UUIDV4,
       },
       user_id: {
         type: Sequelize.CHAR(36),
