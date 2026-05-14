@@ -6,7 +6,7 @@ module.exports = {
       id: {
         type: Sequelize.CHAR(36),
         primaryKey: true,
-        defaultValue: Sequelize.literal('UUID()'),  // MySQL/MariaDB UUID() function
+        defaultValue: Sequelize.UUID4,
         collate: 'utf8mb4_bin'
       },
       service_id: {
@@ -17,6 +17,7 @@ module.exports = {
           key: 'id'
         },
         onUpdate: 'CASCADE',
+        onDelete: 'RESTRICT',
         collate: 'utf8mb4_bin'
       },
       unit_id: {
@@ -27,6 +28,7 @@ module.exports = {
           key: 'id'
         },
         onUpdate: 'CASCADE',
+        onDelete: 'RESTRICT',
         collate: 'utf8mb4_bin'
       },
       customer_name: {
@@ -35,14 +37,19 @@ module.exports = {
       },
       revenue: {
         type: Sequelize.DECIMAL(15, 2),
-        allowNull: false
+        allowNull: false,
+        validate: {
+          min: 0  // Revenue tidak boleh negatif
+        }
       },
       created_at: {
         type: Sequelize.DATE,
+        allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updated_at: {
         type: Sequelize.DATE,
+        allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
       }
     });
@@ -50,9 +57,18 @@ module.exports = {
     await queryInterface.addIndex('service_revenues', ['service_id']);
     await queryInterface.addIndex('service_revenues', ['unit_id']);
     await queryInterface.addIndex('service_revenues', ['customer_name']);
+
+    // Composite index untuk query yang sering
+    await queryInterface.addIndex('service_revenues', ['service_id', 'unit_id']);
+    await queryInterface.addIndex('service_revenues', ['created_at']);
   },
 
   async down(queryInterface, Sequelize) {
+    await queryInterface.removeIndex('service_revenues', ['service_id', 'unit_id']);
+    
+    await queryInterface.removeIndex('service_revenues', ['created_at']);
+    
+    // Drop table
     await queryInterface.dropTable('service_revenues');
   }
 };
