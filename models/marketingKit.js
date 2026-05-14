@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'marketing_kit_id',
         otherKey: 'service_id',
         as: 'services',
-        timestamps: true, // pivot memiliki created_at/updated_at
+        timestamps: false,
       });
 
       // Log download (audit trail)

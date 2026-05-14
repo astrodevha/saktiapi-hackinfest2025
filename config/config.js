@@ -55,18 +55,21 @@ const test = {
 
 const production = {
   ...baseConfig,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS || null,
-  database: process.env.DB_NAME,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  logging: false,            // di production log query bisa jadi beban, matikan
-  pool: {                    // connection pool untuk production
-    max: 10,
+  use_env_variable: 'MYSQL_PUBLIC_URL', // Gunakan DATABASE_URL jika tersedia, fallback ke variabel terpisah
+  logging: false,                          // Matikan logging di production
+  pool: {
+    max: 5,
     min: 0,
     acquire: 30000,
-    idle: 10000,
+    idle: 10000
   },
+  dialectOptions: {
+    // Required untuk Railway MySQL
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
+  }
 };
 
 // ============================================================
