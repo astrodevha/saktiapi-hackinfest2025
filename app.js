@@ -71,7 +71,7 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   credentials: true,               // Mengizinkan cookies & Authorization header
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exporsedHeaders: ['Authorization'],
+  exposedHeaders: ['Authorization'],
 };
 
 app.use(cors(corsOptions));
